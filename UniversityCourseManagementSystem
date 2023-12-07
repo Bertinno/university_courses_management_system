@@ -1,0 +1,592 @@
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+/**
+ * The main class University Course Management System.
+ * Class provides the interface, students, professors.
+ */
+public class UniversityCourseManagementSystem {
+    private static List<Course> courses = new ArrayList<>();
+    private static List<Student> students = new ArrayList<>();
+    private static List<Professor> professors = new ArrayList<>();
+
+    /**
+     * Function Main. It provides what methods and classes to use to store courses,
+     * students, professors and operations with them.
+     * The scanner accepts the command value and makes a request for the desired method with checks.
+     */
+    public static void main(String[] args) {
+        fillInitialData();
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (scanner.hasNext()) {
+                String input = scanner.nextLine();
+                String command = input.toLowerCase();
+                if (command.equals("course")) {
+                    courseCommand(scanner);
+                } else if (command.equals("student")) {
+                    studentCommand(scanner);
+                } else if (command.equals("professor")) {
+                    professorCommand(scanner);
+                } else if (command.equals("enroll")) {
+                    enrollCommand(scanner);
+                } else if (command.equals("drop")) {
+                    dropCommand(scanner);
+                } else if (command.equals("teach")) {
+                    teachCommand(scanner);
+                } else if (command.equals("exempt")) {
+                    exemptCommand(scanner);
+                } else {
+                    System.out.println("Wrong inputs");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+
+    private static void courseCommand(Scanner scanner) {
+        if (!scanner.hasNextLine()) {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        String courseName = scanner.nextLine().toLowerCase();
+        if (!nameCheckForCourses(courseName)) {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+        if (!underscoreCheck(courseName)) {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        if (isCourseExists(courseName)) {
+            System.out.println("Course exists");
+            System.exit(0);
+            return;
+        }
+        List<String> levels = Arrays.asList("BACHELOR", "MASTER");
+
+        String courseLevelInput = scanner.nextLine().toUpperCase();
+        if (!levels.contains(courseLevelInput)) {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+        CourseLevel courseLevel = CourseLevel.valueOf(courseLevelInput);
+
+        Course newCourse = new Course(courseName, courseLevel);
+        courses.add(newCourse);
+        System.out.println("Added successfully");
+    }
+
+    private static void studentCommand(Scanner scanner) {
+        String memberName = scanner.nextLine().toLowerCase();
+        if (!nameCheck(memberName)) {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+        Student newStudent = new Student(memberName);
+        students.add(newStudent);
+        System.out.println("Added successfully");
+    }
+
+    private static void professorCommand(Scanner scanner) {
+        String memberName = scanner.nextLine().toLowerCase();
+        if (!nameCheck(memberName)) {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+        Professor newProfessor = new Professor(memberName);
+        professors.add(newProfessor);
+        System.out.println("Added successfully");
+    }
+
+    private static void enrollCommand(Scanner scanner) {
+        int memberId;
+        int courseId;
+
+        if (scanner.hasNextInt()) {
+            memberId = scanner.nextInt();
+        } else {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        if (scanner.hasNextInt()) {
+            courseId = scanner.nextInt();
+        } else {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        scanner.nextLine();
+
+        Student student = studentSearchId(memberId);
+        Course course = courseSearchId(courseId);
+
+        if (student.getEnrolledCourses().contains(course)) {
+            System.out.println("Student is already enrolled in this course");
+            System.exit(0);
+        }
+
+        if (student.enroll(course)) {
+            System.out.println("Enrolled successfully");
+        } else {
+            System.out.println("Course is full");
+            System.exit(0);
+        }
+    }
+
+    private static Student studentSearchId(int memberId) {
+        for (Student student : students) {
+            if (student.getMemberId() == memberId) {
+                return student;
+            }
+        }
+        System.out.println("Wrong inputs");
+        System.exit(0);
+        return null;
+    }
+
+    private static Course courseSearchId(int courseId) {
+        for (Course course : courses) {
+            if (course.getCourseId() == courseId) {
+                return course;
+            }
+        }
+        System.out.println("Wrong inputs");
+        System.exit(0);
+        return null;
+    }
+
+    private static void dropCommand(Scanner scanner) {
+        int memberId;
+        int courseId;
+
+        if (scanner.hasNextInt()) {
+            memberId = scanner.nextInt();
+        } else {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        if (scanner.hasNextInt()) {
+            courseId = scanner.nextInt();
+        } else {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        scanner.nextLine();
+
+        Student student = studentSearchId(memberId);
+        Course course = courseSearchId(courseId);
+
+        if (student.drop(course)) {
+            System.out.println("Dropped successfully");
+        } else {
+            System.out.println("Student is not enrolled in this course");
+            System.exit(0);
+        }
+    }
+
+    private static void teachCommand(Scanner scanner) {
+        int memberId;
+        int courseId;
+
+        if (scanner.hasNextInt()) {
+            memberId = scanner.nextInt();
+        } else {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        if (scanner.hasNextInt()) {
+            courseId = scanner.nextInt();
+        } else {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        scanner.nextLine();
+
+        Professor professor = professorSearchId(memberId);
+        Course course = courseSearchId(courseId);
+
+        if (professor.teach(course)) {
+            System.out.println("Professor is successfully assigned to teach this course");
+        } else {
+            System.out.println("Professor is already teaching this course");
+            System.exit(0);
+        }
+    }
+
+    private static void exemptCommand(Scanner scanner) {
+        int memberId;
+        int courseId;
+
+        if (scanner.hasNextInt()) {
+            memberId = scanner.nextInt();
+        } else {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        if (scanner.hasNextInt()) {
+            courseId = scanner.nextInt();
+        } else {
+            System.out.println("Wrong inputs");
+            System.exit(0);
+            return;
+        }
+
+        scanner.nextLine();
+
+        Professor professor = professorSearchId(memberId);
+        Course course = courseSearchId(courseId);
+
+        if (professor.exempt(course)) {
+            System.out.println("Professor is exempted");
+        } else {
+            System.out.println("Professor is not teaching this course");
+            System.exit(0);
+        }
+    }
+
+    private static Professor professorSearchId(int memberId) {
+        for (Professor professor : professors) {
+            if (professor.getMemberId() == memberId) {
+                return professor;
+            }
+        }
+        System.out.println("Wrong inputs");
+        System.exit(0);
+        return null;
+    }
+
+    private static boolean nameCheck(String name) {
+        List<String> commands = Arrays.asList("course", "student", "professor", "enroll", "drop", "teach", "exempt");
+        if (commands.contains(name)) {
+            return false;
+        }
+        String letters = "abcdefghijklmnopqrstuvwxyz";
+
+        for (int i = 0; i < name.length(); i++) {
+            char letter = name.charAt(i);
+            if (letters.indexOf(letter) == -1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean nameCheckForCourses(String name) {
+        List<String> commands = Arrays.asList("course", "student", "professor", "enroll", "drop", "teach", "exempt");
+        if (commands.contains(name)) {
+            return false;
+        }
+        String letters = "abcdefghijklmnopqrstuvwxyz_";
+
+        for (int i = 0; i < name.length(); i++) {
+            char letter = name.charAt(i);
+            if (letters.indexOf(letter) == -1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean underscoreCheck(String name) {
+        if (name.contains("__")) {
+            return false;
+        }
+        if (name.charAt(name.length() - 1) == '_' || name.charAt(0) == '_') {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isCourseExists(String courseName) {
+        for (Course course : courses) {
+            if (course.getCourseName().equals(courseName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Fill initial data method fills start information about courses, students and professors
+     */
+    public static void fillInitialData() {
+        Course javaBeginner = new Course("java_beginner", CourseLevel.BACHELOR);
+        courses.add(javaBeginner);
+        Course javaintermediate = new Course("java_intermediate", CourseLevel.BACHELOR);
+        courses.add(javaintermediate);
+        Course pythonbasics = new Course("python_basics", CourseLevel.BACHELOR);
+        courses.add(pythonbasics);
+        Course algorithms = new Course("algorithms", CourseLevel.MASTER);
+        courses.add(algorithms);
+        Course advancedprogramming = new Course("advanced_programming", CourseLevel.MASTER);
+        courses.add(advancedprogramming);
+        Course mathematicalanalysis = new Course("mathematical_analysis", CourseLevel.MASTER);
+        courses.add(mathematicalanalysis);
+        Course computervision = new Course("computer_vision", CourseLevel.MASTER);
+        courses.add(computervision);
+
+
+        Student alice = new Student("Alice");
+        alice.getEnrolledCourses().add(javaBeginner);
+        alice.getEnrolledCourses().add(javaintermediate);
+        alice.getEnrolledCourses().add(pythonbasics);
+        students.add(alice);
+
+        Student bob = new Student("Bob");
+        bob.getEnrolledCourses().add(javaBeginner);
+        bob.getEnrolledCourses().add(algorithms);
+        students.add(bob);
+
+        Student alex = new Student("Alex");
+        alex.getEnrolledCourses().add(advancedprogramming);
+        students.add(alex);
+
+        Professor ali = new Professor("Ali");
+        ali.getAssignedCourses().add(javaBeginner);
+        ali.getAssignedCourses().add(javaintermediate);
+        professors.add(ali);
+
+        Professor ahmed = new Professor("Ahmed");
+        ahmed.getAssignedCourses().add(pythonbasics);
+        ahmed.getAssignedCourses().add(advancedprogramming);
+        professors.add(ahmed);
+
+        Professor andrey = new Professor("Andrey");
+        andrey.getAssignedCourses().add(mathematicalanalysis);
+        professors.add(andrey);
+    }
+}
+
+/**
+ * Class implements student enroll, drop and storage
+ */
+class Student extends UniversityMember implements Enrollable {
+    private static final int MAX_ENROLLMENT = 3;
+    private List<Course> enrolledCourses = new ArrayList<>();
+
+    /**
+     * Constructs a new Student with the specified member name.
+     *
+     * @param memberName The name of the student.
+     */
+    public Student(String memberName) {
+        super(memberName);
+    }
+
+    /**
+     * Method drops student from course
+     *
+     * @param course
+     * @return
+     */
+    @Override
+    public boolean drop(Course course) {
+        if (enrolledCourses.contains(course)) {
+            enrolledCourses.remove(course);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Method enrolls student into course
+     *
+     * @param course
+     * @return
+     */
+    @Override
+    public boolean enroll(Course course) {
+        if (!enrolledCourses.contains(course)) {
+            if (enrolledCourses.size() < MAX_ENROLLMENT) {
+                enrolledCourses.add(course);
+                return true;
+            } else {
+                System.out.println("Maximum enrollment is reached for the student");
+                System.exit(0);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Course list getter
+     *
+     * @return
+     */
+    public List<Course> getEnrolledCourses() {
+        return enrolledCourses;
+    }
+}
+
+/**
+ * Class implements professor`s course teach, exempt and storage
+ */
+class Professor extends UniversityMember {
+    private static final int MAX_LOAD = 2;
+    private List<Course> assignedCourses = new ArrayList<>();
+
+    public Professor(String memberName) {
+        super(memberName);
+    }
+
+    /**
+     * Method provides professor`s teaching
+     *
+     * @param course
+     * @return
+     */
+    public boolean teach(Course course) {
+        if (!assignedCourses.contains(course) && assignedCourses.size() < MAX_LOAD) {
+            assignedCourses.add(course);
+            return true;
+        } else {
+            System.out.println("Professor's load is complete");
+            System.exit(0);
+        }
+        return false;
+    }
+
+    /**
+     * Method provides professor`s exempting
+     *
+     * @param course
+     * @return
+     */
+    public boolean exempt(Course course) {
+        if (assignedCourses.contains(course)) {
+            assignedCourses.remove(course);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Course list getter
+     *
+     * @return
+     */
+    public List<Course> getAssignedCourses() {
+        return assignedCourses;
+    }
+
+}
+
+/**
+ * Abstract class which provides data about university member
+ */
+abstract class UniversityMember {
+    private static int numberOfMembers;
+    private int memberId;
+    private String memberName;
+
+    /**
+     * method increments memberId
+     *
+     * @param memberName
+     */
+    public UniversityMember(String memberName) {
+        numberOfMembers++;
+        this.memberId = numberOfMembers;
+        this.memberName = memberName;
+    }
+
+    /**
+     * MemberId getter
+     *
+     * @return
+     */
+    public int getMemberId() {
+        return this.memberId;
+    }
+}
+
+/**
+ * interface for Student`s methods
+ */
+interface Enrollable {
+    public boolean drop(Course course);
+
+    public boolean enroll(Course course);
+}
+
+/**
+ * Class provides operations with courses.
+ */
+class Course {
+    private static final int CAPACITY = 3;
+    private static int numberOfCourses;
+    private int courseId;
+    private String courseName;
+    private List<Student> enrolledStudents = new ArrayList<>();
+    private CourseLevel courseLevel;
+
+    /**
+     * Method increments courseId
+     *
+     * @param courseName
+     * @param courseLevel
+     */
+    public Course(String courseName, CourseLevel courseLevel) {
+        this.courseName = courseName;
+        this.courseLevel = courseLevel;
+        numberOfCourses++;
+        courseId = numberOfCourses;
+    }
+
+    public boolean isFull() {
+        return enrolledStudents.size() >= CAPACITY;
+    }
+
+    /**
+     * courseName getter
+     *
+     * @return
+     */
+    public String getCourseName() {
+        return courseName;
+    }
+
+    /**
+     * courseId getter
+     *
+     * @return
+     */
+    public int getCourseId() {
+        return this.courseId;
+    }
+}
+
+/**
+ * enumeration for level of course
+ */
+enum CourseLevel {
+    BACHELOR,
+    MASTER;
+}
+
