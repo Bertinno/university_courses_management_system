@@ -18,7 +18,6 @@ public class UniversityCourseManagementSystem {
      * The scanner accepts the command value and makes a request for the desired method with checks.
      */
     public static void main(String[] args) {
-        fillInitialData();
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNext()) {
                 String input = scanner.nextLine();
@@ -331,58 +330,7 @@ public class UniversityCourseManagementSystem {
         }
         return false;
     }
-
-    /**
-     * Fill initial data method fills start information about courses, students and professors
-     */
-    public static void fillInitialData() {
-        Course javaBeginner = new Course("java_beginner", CourseLevel.BACHELOR);
-        courses.add(javaBeginner);
-        Course javaintermediate = new Course("java_intermediate", CourseLevel.BACHELOR);
-        courses.add(javaintermediate);
-        Course pythonbasics = new Course("python_basics", CourseLevel.BACHELOR);
-        courses.add(pythonbasics);
-        Course algorithms = new Course("algorithms", CourseLevel.MASTER);
-        courses.add(algorithms);
-        Course advancedprogramming = new Course("advanced_programming", CourseLevel.MASTER);
-        courses.add(advancedprogramming);
-        Course mathematicalanalysis = new Course("mathematical_analysis", CourseLevel.MASTER);
-        courses.add(mathematicalanalysis);
-        Course computervision = new Course("computer_vision", CourseLevel.MASTER);
-        courses.add(computervision);
-
-
-        Student alice = new Student("Alice");
-        alice.getEnrolledCourses().add(javaBeginner);
-        alice.getEnrolledCourses().add(javaintermediate);
-        alice.getEnrolledCourses().add(pythonbasics);
-        students.add(alice);
-
-        Student bob = new Student("Bob");
-        bob.getEnrolledCourses().add(javaBeginner);
-        bob.getEnrolledCourses().add(algorithms);
-        students.add(bob);
-
-        Student alex = new Student("Alex");
-        alex.getEnrolledCourses().add(advancedprogramming);
-        students.add(alex);
-
-        Professor ali = new Professor("Ali");
-        ali.getAssignedCourses().add(javaBeginner);
-        ali.getAssignedCourses().add(javaintermediate);
-        professors.add(ali);
-
-        Professor ahmed = new Professor("Ahmed");
-        ahmed.getAssignedCourses().add(pythonbasics);
-        ahmed.getAssignedCourses().add(advancedprogramming);
-        professors.add(ahmed);
-
-        Professor andrey = new Professor("Andrey");
-        andrey.getAssignedCourses().add(mathematicalanalysis);
-        professors.add(andrey);
-    }
 }
-
 /**
  * Class implements student enroll, drop and storage
  */
