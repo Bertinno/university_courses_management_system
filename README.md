@@ -6,31 +6,31 @@ The inputs are represented by standard input. The program should read the input 
 
 The input should be in the following format:
 _____________________________________________________________________________________________________________________________
-Command	            |  Input_format
+Command               Input_format 
 _____________________________________________________________________________________________________________________________
-Add course	        |  course
-                    |  courseName
-                    |  courseLevel
+Add course:	          course
+                      courseName
+                      courseLevel
 _____________________________________________________________________________________________________________________________
-Add student	        |  student
-                    |  memberName
+Add student:	        student
+                      memberName
 _____________________________________________________________________________________________________________________________
-Add professor	      |  professor
-                    |  memberName
+Add professor:	      professor
+                      memberName
 _____________________________________________________________________________________________________________________________
-Enroll to course	  |  enroll
-                    |  memberId
-                    |  courseId
+Enroll to course:	    enroll
+                      memberId
+                      courseId
 _____________________________________________________________________________________________________________________________
-Drop from course	  |  drop
-                    |  memberId
-                    |  courseId
+Drop from course:	    drop
+                      memberId
+                      courseId
 _____________________________________________________________________________________________________________________________
-Assign to course	  |  teach
-                    |  memberId
-                    |  courseId
+Assign to course:	    teach
+                      memberId
+                      courseId
 _____________________________________________________________________________________________________________________________
-Exempt from course	|  exempt
-                    |  memberId
-                    |  courseId
+Exempt from course:	  exempt
+                      memberId
+                      courseId
 ____________________________________________________________________________________________________________________________
